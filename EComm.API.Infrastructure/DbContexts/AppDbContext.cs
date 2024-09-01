@@ -32,7 +32,7 @@ namespace EComm.API.Infrastructure.DbContexts
                 .Property(p => p.IsDeleted)
                 .HasDefaultValue("False");
             modelBuilder.Entity<Customer>()
-                .HasIndex(p => p.Email)
+                .HasIndex(p => p.Email) // clusterd and un clasterd index
                 .IsUnique();
                 
             modelBuilder.Entity<Product>()

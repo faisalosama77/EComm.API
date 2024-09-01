@@ -9,9 +9,8 @@ namespace EComm.API.BusinessDomain.DTOs
 {
     public class OrderItemDTO
     {
-        [Required]
         public Guid ProductId { get; set; }
-        public required int Quantity { get; set; }
+        public int Quantity { get; set; }
         public double Cost { get; set; }
 
     }

@@ -13,25 +13,14 @@ using System.Threading.Tasks;
 
 namespace EComm.API.BusinessDomain.Implementation.Services
 {
-    public class ProductService(IProductRepository productRepository, IUnitOfWork unitOfWork) : IProductService
+    public class ProductService(IProductRepository productRepository, IUnitOfWork unitOfWork,ICustomerService customerService) : IProductService
     {
-        public async Task AddProductAsync(ProductDTO productDTO)
+        public async Task<int> AddProductAsync(ProductDTO productDTO)
         {
             var product = productDTO.Adapt<Product>();
             await productRepository.CreateProductAsync(product);
-            await unitOfWork.SaveChangesAsync();
-        }
-
-        public async Task<bool> AdminCheckAsync(bool isAdmin)
-        {
-            if (isAdmin == true) 
-            {
-                await Task.CompletedTask;
-                return true; 
-            }
-            await Task.CompletedTask;
-            return false;
-
+            var result = await unitOfWork.SaveChangesAsync();
+            return result;
         }
         public async Task DeleteProductAsync(Guid id)
         {
@@ -41,61 +30,65 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             var delProduct = deletedProduct.Adapt<Product>();
             delProduct.IsDeleted = true;
             await productRepository.DeleteProductAsync(delProduct);
-            await unitOfWork.SaveChangesAsync();
+            var result = await unitOfWork.SaveChangesAsync();
+            if (result == 0)
+                throw new ArgumentException("Can't Delete Product");
         }
 
         public async Task EditProductAsync(ProductDTO productDTO, Guid id)
         {
             var productFromDb = await productRepository.GetProductByIdAsync(id);
             if (productFromDb == null)
-                throw new ArgumentException("Invalid Order Id", nameof(id));
+              throw new NullReferenceException("Invalid Order Id");
+
             productFromDb.Name = productDTO.Name;
             productFromDb.Description = productDTO.Description;
             productFromDb.Amount = productDTO.Amount;
             productFromDb.Type = productDTO.Type;
+            productFromDb.Status = productDTO.Status;
+
             if (productDTO.Quantity != productFromDb.Quantity)
             {
-                productFromDb.Status = SetStatus(productDTO.Quantity);
+                //productFromDb.Status = SetStatus(productDTO.Quantity);
                 productFromDb.Quantity = productDTO.Quantity;
             }
 
             await productRepository.UpdateProductAsync(productFromDb);
-            await unitOfWork.SaveChangesAsync();
-          // if (await unitOfWork.SaveChangesAsync == 1) { }
+            var result = await unitOfWork.SaveChangesAsync();
+            if (result == 0)
+                throw new ArgumentException("Can't Update Customer");
         }
 
         public async Task<ProductDTO?> GetProductByIdAsync(Guid id)
         {
             var Product = await productRepository.GetProductByIdAsync(id);
-            
             var wantedProduct = Product.Adapt<ProductDTO>();
-            await unitOfWork.SaveChangesAsync();
             if (wantedProduct.IsDeleted == true)
                 return null;
             return wantedProduct;
         }
 
-        public async Task<IEnumerable<ProductDTO?>> ListAllProductsAsync()
+        public async Task<IEnumerable<ProductDTO?>> ListAllProductsAsync(Guid customerId)
         {
-            // customr service 
-            //if CS.Isadmis == true
-            var Products = await productRepository.GetAllProductsAsync();
-            await unitOfWork.SaveChangesAsync();
-            if (Products is null)
+            var customer = await customerService.GetUserById(customerId);
+            if (customer is null)
                 return null;
+            var Products = await productRepository.GetAllProductsAsync();
             var allProducts = Products.Adapt<List<ProductDTO>>();
-            return allProducts.Where(a => a.IsDeleted == false);
+            if (customer.IsAdmin == false)
+                return allProducts.Where(a => a.IsDeleted == false);
+            return allProducts;
         }
 
-        private string SetStatus(int quantity)
-        {
-            return quantity switch
-            {
-                0 => "Out of stock",
-                <= 5 => "Limited",
-                _ => "Stocked",
-            };
-        }
+        //private string SetStatus(int quantity)
+        //{
+        //    return quantity switch
+        //    {
+        //        0 => "Out of stock",
+        //        <= 5 => "Limited",
+        //        _ => "Stocked",
+        //    };
+        //}
 
     }
 }

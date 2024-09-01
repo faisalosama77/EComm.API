@@ -35,7 +35,6 @@ namespace EComm.API.Infrastructure.Implementation.Repositories
         public async Task<IEnumerable<Product?>> GetAllProductsAsync()
         {
             return await _products.ToListAsync();
-            //.Where(a => a.IsDeleted == false)
         }
 
         public async Task<Product?> GetProductByIdAsync(Guid id)

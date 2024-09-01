@@ -4,40 +4,34 @@ using EComm.API.Infrastructure.Entities;
 using EComm.API.Infrastructure.Implementation.Repositories;
 using EComm.API.Infrastructure.Interfaces.IRepositories;
 using Mapster;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace EComm.API.BusinessDomain.Implementation.Services
 {
-    public class CustomerService : ICustomerService
+    public class CustomerService(ICustomerRepository userRepository, IUnitOfWork unitOfWork ) : ICustomerService
     {
-        private readonly ICustomerRepository _userRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        public CustomerService(ICustomerRepository userRepository, IUnitOfWork unitOfWork)
+        public async Task<int> Register(CustomerDTO customerDTO)
         {
-            _userRepository = userRepository;
-            _unitOfWork = unitOfWork;
-        }
-
-        public  async Task Register(CustomerDTO customerDTO)
-        {
-                var user = customerDTO.Adapt<Customer>();
-                
-            await _userRepository.CreateUserAsync(user);
-                await _unitOfWork.SaveChangesAsync();
-            //kkloj
+            var user = customerDTO.Adapt<Customer>();
+            await userRepository.CreateUserAsync(user);
+            var result = await unitOfWork.SaveChangesAsync();
+            return result;
         }
 
 
         public async Task<CustomerDTO> GetUserByEmail(string email)
         {
-           var user = await _userRepository.GetUserByEmail(email);
-            await _unitOfWork.SaveChangesAsync();
+           var user = await userRepository.GetUserByEmail(email);
             if (user != null)
                 return user.Adapt<CustomerDTO>();
 
@@ -46,20 +40,27 @@ namespace EComm.API.BusinessDomain.Implementation.Services
 
         public async Task<CustomerDTO> GetUserByEmailandPassword(string email, string password)
         {
-            var user = await _userRepository.GetUserByEmailandPassword(email, password);
-            await _unitOfWork.SaveChangesAsync();
+            var user = await userRepository.GetUserByEmailandPassword(email, password);
             if (user != null)
                 return user.Adapt<CustomerDTO>();
             return null;
         }
-        public async Task<bool> EmailValidationAsync(string email)
+        public async Task<Customer> GetUserById(Guid id)
         {
-            Regex regexEmail = new Regex
-                ("^[a-z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9]+)*\\.([a-z]{2,4})$", RegexOptions.IgnoreCase);
-            await Task.CompletedTask;
-            return regexEmail.IsMatch(email);
+            var customer = await userRepository.GetUserById(id);
             
+            if (customer == null)
+                return null;
+            return customer;
         }
+        //public async Task<bool> EmailValidationAsync(string email)
+        //{
+        //    Regex regexEmail = new Regex
+        //        ("^[a-z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9]+)*\\.([a-z]{2,4})$", RegexOptions.IgnoreCase);
+        //    await Task.CompletedTask;
+        //    return regexEmail.IsMatch(email);
 
+        //}
+      
     }
 }

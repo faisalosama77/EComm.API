@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace EComm.API.BusinessDomain.Implementation.Services
+namespace EComm.API.CustomValidation
 {
-    internal class PasswordRuless : ValidationAttribute
+    internal class PasswordRules : ValidationAttribute
     {
-        public PasswordRuless()
+        public PasswordRules()
         {
             ErrorMessage = "Password must be at least 8 characters long, " +
                           "contain at least one uppercase letter, " +

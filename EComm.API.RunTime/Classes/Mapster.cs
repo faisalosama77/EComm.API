@@ -11,14 +11,14 @@ namespace EComm.API.RunTime.Classes
 {
     public static class Mapster
     {
-        public static void RegisterMappings()
-        {
-            TypeAdapterConfig<ProductDTO, Product>
-                .NewConfig();
-            TypeAdapterConfig.GlobalSettings
-            .NewConfig<CustomerDTO, Customer>()
-            .IgnoreNonMapped(true);
-        }
+        //public static void RegisterMappings()
+        //{
+        //    TypeAdapterConfig<ProductDTO, Product>
+        //        .NewConfig();
+        //    TypeAdapterConfig.GlobalSettings
+        //    .NewConfig<CustomerDTO, Customer>()
+        //    .IgnoreNonMapped(true);
+        //}
     }
 }
 //TypeAdapterConfig<ProductDTO, Product>

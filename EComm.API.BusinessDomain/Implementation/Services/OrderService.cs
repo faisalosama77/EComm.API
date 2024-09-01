@@ -15,7 +15,7 @@ namespace EComm.API.BusinessDomain.Implementation.Services
 {
     public class OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWork  , IProductService productService) : IOrderService
     {
-        public async Task AddOrderAsync(OrderDTO orderDTO)
+        public async Task<int> AddOrderAsync(OrderDTO orderDTO)
         {
             var amountt = await AmountCalcAsync(orderDTO.OrderItem);
             var AddedOrder = orderDTO.Adapt<Order>();
@@ -23,23 +23,29 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             AddedOrder.Tax = 0.14f;
             AddedOrder.TotalAmount = TotalPrice(AddedOrder.Amount , AddedOrder.Tax);// Round
             await orderRepository.CreateOrderAsync(AddedOrder);
-            await unitOfWork.SaveChangesAsync();
+            var result = await unitOfWork.SaveChangesAsync();
+            return result;
         }
 
         public async Task DeleteOrderAsync(Guid id)
         {
             var deletedOrder = await orderRepository.GetOrderByIdAsync(id);
+            if (deletedOrder == null) 
+                throw new NullReferenceException("Order Doesn't Exist");
             deletedOrder.IsDeleted = true;
              await orderRepository.DeleteOrderAsync(deletedOrder);
-             await unitOfWork.SaveChangesAsync();
+             var result = await unitOfWork.SaveChangesAsync();
+             if (result == 0)
+                 throw new ArgumentException("Can't Get Products");
         }
 
         public async Task<IEnumerable<OrderDTO?>> GetCustomerWithOrdersAsync(Guid customerId)
         {
             var customerOrders = await orderRepository.GetCustomerWithOrders(customerId);
-            var customerOrdersDto = customerOrders.Adapt<List<OrderDTO>>();
-            if (customerOrdersDto == null)
+            if (customerOrders == null)
                 return null;
+            var customerOrdersDto = customerOrders.Adapt<List<OrderDTO>>();
+            
             return customerOrdersDto;
         }
 
@@ -54,7 +60,6 @@ namespace EComm.API.BusinessDomain.Implementation.Services
         public async Task<IEnumerable<OrderDTO?>> ListAllOrdersAsync()
         {
             var orders = await orderRepository.GetAllOrdersAsync();
-            await unitOfWork.SaveChangesAsync();
             if (orders is null)
                 return null;
             var orderDto = orders.Adapt<List<OrderDTO>>();

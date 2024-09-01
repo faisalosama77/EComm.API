@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,10 +25,13 @@ namespace EComm.API.Infrastructure.Implementation.Repositories
         public async Task<Customer?> GetUserByEmail(string email)
         {
              return await _customer.SingleOrDefaultAsync(a => a.Email == email);
-
         }
 
         public async Task<Customer> GetUserByEmailandPassword(string email, string password)
             => await _customer.FirstOrDefaultAsync(a => a.Email == email && a.PasswordHash == password);
+        public async Task<Customer> GetUserById(Guid id)
+        {
+            return await _customer.FirstOrDefaultAsync(x => x.Id == id);
+        }
     }
 }

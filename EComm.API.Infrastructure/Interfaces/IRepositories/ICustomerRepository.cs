@@ -12,6 +12,6 @@ namespace EComm.API.Infrastructure.Interfaces.IRepositories
         public Task CreateUserAsync(Customer user);
         public Task<Customer?> GetUserByEmail(string email);
         public Task<Customer> GetUserByEmailandPassword(string email , string password);
-
+        public Task<Customer> GetUserById(Guid id);
     }
 }

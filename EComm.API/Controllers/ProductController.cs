@@ -7,6 +7,9 @@ using EComm.API.Views;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Mapster;
+using EComm.API.RunTime.Classes;
+using System;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace EComm.API.Controllers
@@ -15,59 +18,70 @@ namespace EComm.API.Controllers
     [ApiController]
     public class ProductController(IProductService productService) : ControllerBase
     {
+        [Authorize]
         [HttpPost("AddProduct")]
-        public async Task<ActionResult> PostProduct([FromBody] ProductVM productVM)
+        public async Task<BaseResponse> PostProduct([FromBody] ProductVM productVM)
         {
             if (ModelState.IsValid)
             {
-                var productDTO = productVM.Adapt<ProductDTO>();
-                await productService.AddProductAsync(productDTO);
-                return Ok("Product Added Successfully");
+                    var productDTO = productVM.Adapt<ProductDTO>();
+                    var isSaved = await productService.AddProductAsync(productDTO);
+                    if(isSaved == 0 )
+                        return new ErrorResponse() { StatusCode = 400, Message = "Bad Request", Error = "Can't Add Product"};
+                    return new BaseResponse() { StatusCode = 200, Message = "Product Added Succeessfully" };
             }
-            return BadRequest("InValidData");
+            return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetProductById{id}")]
-        public async Task<ActionResult<Product>> GetProductById(Guid id)
+        public async Task<BaseResponse> GetProductById([FromRoute]Guid id)
         {
-            var product = await productService.GetProductByIdAsync(id);
-            if (product == null)
-                return NotFound("Product doesn`t exist");
-            return Ok($"{product} Product Retrieved Successfully");
+            if (ModelState.IsValid)
+            {
+                var product = await productService.GetProductByIdAsync(id);
+                if (product == null)
+                    return new ErrorResponse() { StatusCode = 404, Message = "Not Found", Error = "Product Doesn't Exist " };
+                var productdb = product.Adapt<Product>();
+                return new SuccessResponse<Product>() { StatusCode = 200, Message = "Products Retrieved Successfully", Data = productdb };
+            }
+            return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
         }
         [HttpGet("GetAllProducts")]
-        public async Task<ActionResult<Product>> GetAllProducts()
+        public async Task<BaseResponse> GetAllProducts(Guid customerId)
         {
             if (ModelState.IsValid)
             {
-                var AllProducts = await productService.ListAllProductsAsync();
-                if (AllProducts == null)
-                    return NotFound("No Products Founded");
-                return Ok($"{AllProducts} Products Retrieved Successfully");
+                    var AllProducts = await productService.ListAllProductsAsync(customerId);
+                    if (AllProducts == null)
+                        return new ErrorResponse() { StatusCode = 404, Message = "Not Found", Error = "Customer Id Doesn't Exist" };
+                    var allProductsdb = AllProducts.Adapt<List<Product>>();
+                    return new SuccessResponse<List<Product>>() { StatusCode = 200, Message = "Products Retrieved Successfully", Data = allProductsdb };  
             }
-            return BadRequest("Invalid Data");
+            return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
         }
         [HttpDelete("DeleteProduct{id}")]
-        public async Task<ActionResult> DeleteProduct(Guid id)
+        public async Task<BaseResponse> DeleteProduct(Guid id)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     await productService.DeleteProductAsync(id);
-                    return Ok("Product Deleted Successfully");
+                    return new BaseResponse() { StatusCode = 200, Message = "Product Deleted Succeessfully" };
 
                 }
-                catch (Exception ex)
-                { 
-                    return BadRequest(ex.Message);
+                catch (ArgumentException argumentException)
+                {
+                    return new ErrorResponse() { StatusCode = 400, Message = "Bad Request", Error = argumentException.Message };
                 }
             }
 
-            return BadRequest("InValid Data");
+            return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
         }
 
-       [HttpPut("UpdateProduct{id}")]
-       public async Task<ActionResult<Product>> PutProduct([FromBody] ProductVM productVM , Guid id)
+        [HttpPut("UpdateProduct{id}")]
+       public async Task<BaseResponse> PutProduct([FromBody] ProductVM productVM , Guid id)
         {
             if (ModelState.IsValid)
             {
@@ -75,14 +89,18 @@ namespace EComm.API.Controllers
                 {
                     var productDTO = productVM.Adapt<ProductDTO>();
                     await productService.EditProductAsync(productDTO, id);
-                    return Ok("Product Updated Successfully");
+                    return new BaseResponse() { StatusCode = 200, Message = "Product Updated Succeessfully" };
                 }
-                catch (Exception ex)
-                { 
-                    return BadRequest(ex.Message);
+                catch (NullReferenceException nullReferenceException)
+                {
+                    return new ErrorResponse() { StatusCode = 400, Message = "Bad Request", Error = nullReferenceException.Message };
+                }
+                catch (ArgumentException argumentException)
+                {
+                    return new ErrorResponse() { StatusCode = 400, Message = "Bad Request", Error = argumentException.Message };
                 }
             }
-            return BadRequest("Invalid Data");
+            return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
         }
     }
 }

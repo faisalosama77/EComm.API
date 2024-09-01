@@ -2,7 +2,9 @@
 using EComm.API.BusinessDomain.Interfaces.IServices;
 using EComm.API.Infrastructure.DbContexts;
 using EComm.API.Infrastructure.Entities;
+using EComm.API.Infrastructure.Implementation;
 using EComm.API.Infrastructure.Implementation.Repositories;
+using EComm.API.Infrastructure.Interfaces;
 using EComm.API.Infrastructure.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +26,31 @@ namespace EComm.API.RunTime
             services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(connectionString));
 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+               options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience= false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = configuration["Jwt:Issuer"],
+                    ValidAudience = configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+                };
+            });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy =>
+                {
+                    policy.RequireRole("Admin");
+                });
+            }); // [Authorize(Policy = "AdminOnly")]  [Authorize(Roles = "Admin")]
+
             //services.AddIdentity<Customer, IdentityRole>()
             //         .AddEntityFrameworkStores<AppDbContext>()
             //         .AddDefaultTokenProviders();
@@ -36,6 +63,11 @@ namespace EComm.API.RunTime
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            services.AddScoped<IDbSeeder, DbSeeder>();
+            services.AddScoped<IPasswordHash, PasswordHash>();
+
+
 
 
 

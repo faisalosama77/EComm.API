@@ -29,7 +29,7 @@ namespace EComm.API.Infrastructure.Entities
         public DateTime? CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }
         public bool IsDeleted { get; set; }
-        public bool IsAdmin { get; set; } = false;
+        public bool IsAdmin { get; set; } =false;
 
     }
 }
