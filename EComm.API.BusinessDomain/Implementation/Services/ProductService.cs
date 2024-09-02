@@ -27,15 +27,14 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             var deletedProduct = await productRepository.GetProductByIdAsync(id);
             if (deletedProduct == null)
                 throw new ArgumentException("Invalid Product Id", nameof(id));
-            var delProduct = deletedProduct.Adapt<Product>();
-            delProduct.IsDeleted = true;
-            await productRepository.DeleteProductAsync(delProduct);
+            deletedProduct.IsDeleted = true;
+            await productRepository.DeleteProductAsync(deletedProduct);
             var result = await unitOfWork.SaveChangesAsync();
             if (result == 0)
                 throw new ArgumentException("Can't Delete Product");
         }
 
-        public async Task EditProductAsync(ProductDTO productDTO, Guid id)
+        public async Task<ProductResponseDTO> EditProductAsync(ProductDTO productDTO, Guid id)
         {
             var productFromDb = await productRepository.GetProductByIdAsync(id);
             if (productFromDb == null)
@@ -57,24 +56,27 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             var result = await unitOfWork.SaveChangesAsync();
             if (result == 0)
                 throw new ArgumentException("Can't Update Customer");
+            var productForResponse = productFromDb.Adapt<ProductResponseDTO>();
+            return productForResponse;
+            
         }
 
-        public async Task<ProductDTO?> GetProductByIdAsync(Guid id)
+        public async Task<Product?> GetProductByIdAsync(Guid id)
         {
             var Product = await productRepository.GetProductByIdAsync(id);
-            var wantedProduct = Product.Adapt<ProductDTO>();
-            if (wantedProduct.IsDeleted == true)
+           // var wantedProduct = Product.Adapt<ProductResponseDTO>();
+            if (Product.IsDeleted == true)
                 return null;
-            return wantedProduct;
+            return Product;
         }
 
-        public async Task<IEnumerable<ProductDTO?>> ListAllProductsAsync(Guid customerId)
+        public async Task<IEnumerable<ProductResponseDTO?>> ListAllProductsAsync(Guid customerId)
         {
             var customer = await customerService.GetUserById(customerId);
             if (customer is null)
                 return null;
             var Products = await productRepository.GetAllProductsAsync();
-            var allProducts = Products.Adapt<List<ProductDTO>>();
+            var allProducts = Products.Adapt<List<ProductResponseDTO>>();
             if (customer.IsAdmin == false)
                 return allProducts.Where(a => a.IsDeleted == false);
             return allProducts;

@@ -4,6 +4,7 @@ using EComm.API.BusinessDomain.Interfaces.IServices;
 using EComm.API.Infrastructure.Entities;
 using EComm.API.RunTime.Classes;
 using EComm.API.View_Models;
+using EComm.API.Views;
 using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,15 +17,20 @@ namespace EComm.API.Controllers
     public class OrderController(IOrderService orderService) : ControllerBase
     {
         [HttpPost("AddOrder")]
-        public async Task<BaseResponse> PostOrder([FromBody] OrderVM orderVM)
+        public async Task<BaseResponse> PostOrder([FromBody] OrderRequestVM orderVM)
         {
             if (ModelState.IsValid)
             {
+                try
+                {
                     var orderDTO = orderVM.Adapt<OrderDTO>();
-                    var isSaved = await orderService.AddOrderAsync(orderDTO);
-                    if (isSaved == 0 )
-                        return new ErrorResponse() { StatusCode = 400, Message = "Bad Request", Error = "Can't Add Order"};
-                    return new BaseResponse() { StatusCode = 200, Message = "Order Added Succeessfully" };
+                    var OrderDetails = await orderService.AddOrderAsync(orderDTO);
+                    return new SuccessResponse<OrderResponseDTO>() { StatusCode = 200, Message = "Order Added Successfully", Data = OrderDetails };   //token
+                }
+                catch (ArgumentException argumentException)
+                {
+                    return new ErrorResponse() { StatusCode = 400, Message = "Bad Request", Error = argumentException.Message };
+                }
             }
             return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
         }
@@ -44,8 +50,8 @@ namespace EComm.API.Controllers
                 var customerWithOrders = await orderService.GetCustomerWithOrdersAsync(customerId);
                 if (customerWithOrders == null)
                     return new ErrorResponse() { StatusCode = 404, Message = "Not Found", Error = "Customer Doesn't Exist" };
-                var customerWithOrdersdb = customerWithOrders.Adapt<IEnumerable<Order>>();
-                return new SuccessResponse<IEnumerable<Order>>() { StatusCode = 200, Message = "Products Retrieved Successfully", Data = customerWithOrdersdb }; //Ok($"{AllProducts} 
+                var customerWithOrdersVM = customerWithOrders.Adapt<IEnumerable<OrderResponseVM>>();
+                return new SuccessResponse<IEnumerable<OrderResponseVM>>() { StatusCode = 200, Message = "Products Retrieved Successfully", Data = customerWithOrdersVM }; //Ok($"{AllProducts} 
             }
             return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
         }

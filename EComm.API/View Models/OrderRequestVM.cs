@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EComm.API.View_Models
 {
-    public class OrderVM
+    public class OrderRequestVM
     {
         [Required]
         public Guid CustomerId { get; set; }
-        public required List<OrderItemVM> OrderItem { get; set; }
+        public required List<OrderItemRequestVM> OrderItem { get; set; }
     }
 }

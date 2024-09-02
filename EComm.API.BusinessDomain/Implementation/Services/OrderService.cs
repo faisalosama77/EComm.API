@@ -15,7 +15,7 @@ namespace EComm.API.BusinessDomain.Implementation.Services
 {
     public class OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWork  , IProductService productService) : IOrderService
     {
-        public async Task<int> AddOrderAsync(OrderDTO orderDTO)
+        public async Task<OrderResponseDTO> AddOrderAsync(OrderDTO orderDTO)
         {
             var amountt = await AmountCalcAsync(orderDTO.OrderItem);
             var AddedOrder = orderDTO.Adapt<Order>();
@@ -23,8 +23,11 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             AddedOrder.Tax = 0.14f;
             AddedOrder.TotalAmount = TotalPrice(AddedOrder.Amount , AddedOrder.Tax);// Round
             await orderRepository.CreateOrderAsync(AddedOrder);
+            var OrderDetails = AddedOrder.Adapt<OrderResponseDTO>();
             var result = await unitOfWork.SaveChangesAsync();
-            return result;
+            if (result == 0)
+                throw new ArgumentException("Can't Add Order");
+            return OrderDetails;
         }
 
         public async Task DeleteOrderAsync(Guid id)
@@ -39,30 +42,30 @@ namespace EComm.API.BusinessDomain.Implementation.Services
                  throw new ArgumentException("Can't Get Products");
         }
 
-        public async Task<IEnumerable<OrderDTO?>> GetCustomerWithOrdersAsync(Guid customerId)
+        public async Task<IEnumerable<OrderResponseDTO?>> GetCustomerWithOrdersAsync(Guid customerId)
         {
             var customerOrders = await orderRepository.GetCustomerWithOrders(customerId);
             if (customerOrders == null)
                 return null;
-            var customerOrdersDto = customerOrders.Adapt<List<OrderDTO>>();
+            var customerOrdersDto = customerOrders.Adapt<List<OrderResponseDTO>>();
             
             return customerOrdersDto;
         }
 
-        public async Task<OrderDTO?> GetOrderByIdAsync(Guid id)
+        public async Task<OrderResponseDTO?> GetOrderByIdAsync(Guid id)
         {
             var order = await orderRepository.GetOrderByIdAsync(id);
             if (order != null)
-                return order.Adapt<OrderDTO>(); 
+                return order.Adapt<OrderResponseDTO>(); 
             return null;
         }
 
-        public async Task<IEnumerable<OrderDTO?>> ListAllOrdersAsync()
+        public async Task<IEnumerable<OrderResponseDTO?>> ListAllOrdersAsync()
         {
             var orders = await orderRepository.GetAllOrdersAsync();
             if (orders is null)
                 return null;
-            var orderDto = orders.Adapt<List<OrderDTO>>();
+            var orderDto = orders.Adapt<List<OrderResponseDTO>>();
             
             return orderDto.Where(a => a.IsDeleted == false);
         }
@@ -72,7 +75,8 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             var cost = 0.0;
             foreach (var item in orderItems)
             {
-                var product = await productService.GetProductByIdAsync(item.ProductId);
+                var productResponse = await productService.GetProductByIdAsync(item.ProductId);
+                var product = productResponse.Adapt<ProductDTO>();
                 product.Quantity = product.Quantity - item.Quantity;
                 await productService.EditProductAsync(product, item.ProductId);
                 cost = product.Amount * item.Quantity;

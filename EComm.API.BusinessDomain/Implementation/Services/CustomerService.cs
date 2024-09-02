@@ -38,17 +38,17 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             return null;
         }
 
-        public async Task<CustomerDTO> GetUserByEmailandPassword(string email, string password)
+        public async Task<CustomerResponseDTO> GetUserByEmailandPassword(string email, string password)
         {
             var user = await userRepository.GetUserByEmailandPassword(email, password);
             if (user != null)
-                return user.Adapt<CustomerDTO>();
+                return user.Adapt<CustomerResponseDTO>();
             return null;
         }
         public async Task<Customer> GetUserById(Guid id)
         {
             var customer = await userRepository.GetUserById(id);
-            
+
             if (customer == null)
                 return null;
             return customer;
@@ -61,6 +61,6 @@ namespace EComm.API.BusinessDomain.Implementation.Services
         //    return regexEmail.IsMatch(email);
 
         //}
-      
+
     }
 }

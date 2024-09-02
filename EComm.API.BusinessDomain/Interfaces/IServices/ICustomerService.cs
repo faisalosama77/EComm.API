@@ -12,7 +12,7 @@ namespace EComm.API.BusinessDomain.Interfaces.IServices
     {
         public Task<int> Register(CustomerDTO userDTO);
         public Task<CustomerDTO> GetUserByEmail(string email);
-        public Task<CustomerDTO> GetUserByEmailandPassword(string email, string password);
+        public Task<CustomerResponseDTO> GetUserByEmailandPassword(string email, string password);
         public Task<Customer> GetUserById(Guid id);
        // public Task<bool> EmailValidationAsync(string email);
 

@@ -13,7 +13,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddMyServices(builder.Configuration);
 
 
-
 //dbcontext config
 
 var app = builder.Build();
@@ -31,5 +30,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+DependencyInjection.AppConfig(app);
 
 app.Run();

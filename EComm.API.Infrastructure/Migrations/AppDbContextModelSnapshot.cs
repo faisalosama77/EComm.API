@@ -119,7 +119,7 @@ namespace EComm.API.Infrastructure.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("EComm.API.Infrastructure.Entities.OrderItems", b =>
+            modelBuilder.Entity("EComm.API.Infrastructure.Entities.OrderItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -206,7 +206,7 @@ namespace EComm.API.Infrastructure.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("EComm.API.Infrastructure.Entities.OrderItems", b =>
+            modelBuilder.Entity("EComm.API.Infrastructure.Entities.OrderItem", b =>
                 {
                     b.HasOne("EComm.API.Infrastructure.Entities.Order", "Order")
                         .WithMany("OrderItem")

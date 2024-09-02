@@ -2,9 +2,11 @@
 
 namespace EComm.API.Views
 {
-    public class LoginVM
+    public class LoginRequestVM
     {
+        [Required]
         public string Email { get; set; }
-        public string PasswordSalt { get; set; }
+        [Required]
+        public string PasswordHash { get; set; }
     }
 }

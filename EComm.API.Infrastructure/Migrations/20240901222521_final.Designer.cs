@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EComm.API.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240831003502_AddingValidations")]
-    partial class AddingValidations
+    [Migration("20240901222521_final")]
+    partial class final
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,7 +61,6 @@ namespace EComm.API.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordSalt")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
@@ -123,7 +122,7 @@ namespace EComm.API.Infrastructure.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("EComm.API.Infrastructure.Entities.OrderItems", b =>
+            modelBuilder.Entity("EComm.API.Infrastructure.Entities.OrderItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -210,7 +209,7 @@ namespace EComm.API.Infrastructure.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("EComm.API.Infrastructure.Entities.OrderItems", b =>
+            modelBuilder.Entity("EComm.API.Infrastructure.Entities.OrderItem", b =>
                 {
                     b.HasOne("EComm.API.Infrastructure.Entities.Order", "Order")
                         .WithMany("OrderItem")

@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EComm.API.BusinessDomain\EComm.API.BusinessDomain.csproj" />
-    <ProjectReference Include="..\EComm.API.Infrastructure\EComm.API.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

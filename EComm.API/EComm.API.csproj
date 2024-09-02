@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EComm.API.BusinessDomain\EComm.API.BusinessDomain.csproj" />
     <ProjectReference Include="..\EComm.API.RunTime\EComm.API.RunTime.csproj" />
   </ItemGroup>
 

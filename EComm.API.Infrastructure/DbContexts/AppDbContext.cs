@@ -1,8 +1,6 @@
 ﻿using EComm.API.Infrastructure.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using FluentValidation;
-using FluentValidation.AspNetCore;
+
 
 namespace EComm.API.Infrastructure.DbContexts
 {
@@ -11,13 +9,15 @@ namespace EComm.API.Infrastructure.DbContexts
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
+
         public DbSet<Customer> Customers { get; set; }  
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderItems> OrderItems { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             base.OnModelCreating(modelBuilder);
             // Fluent API 
             modelBuilder.Entity<Customer>()
@@ -55,7 +55,7 @@ namespace EComm.API.Infrastructure.DbContexts
                 .Property(p => p.IsDeleted)
                 .HasDefaultValue("False");
 
-            modelBuilder.Entity<OrderItems>()
+            modelBuilder.Entity<OrderItem>()
                 .Property(p => p.Id)
                 .HasDefaultValueSql("NEWID()");
 

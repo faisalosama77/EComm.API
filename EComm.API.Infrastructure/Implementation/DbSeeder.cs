@@ -29,8 +29,10 @@ namespace EComm.API.Infrastructure.Implementation
                 Admin.UpdatedOn = null;
                 Admin.IsAdmin = true;
                 Admin.IsDeleted = false;
-                
+                customers.AddAsync(Admin);
+                context.SaveChanges();
             }
+            
         }
     }
 }
