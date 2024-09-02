@@ -6,47 +6,45 @@ using Mapster;
 using EComm.API.RunTime.Classes;
 using BC = BCrypt.Net.BCrypt;
 using EComm.API.View_Models;
+using Microsoft.AspNetCore.Authorization;
 namespace EComm.API.Controllers
 {
     [Route("api/Customer")]
-    public class CustomerController(ICustomerService customerService /*IJwtTokenGenerator jwtTokenGenerator*/) : ControllerBase
+    public class CustomerController(ICustomerService customerService ,IJwtTokenGenerator jwtTokenGenerator) : ControllerBase
     {
         [HttpPost("Register")]
-        public async Task<BaseResponse> PostUser([FromBody] CustomerRequestVM CustomerVM)
+        public async Task<BaseResponse> PostUser([FromBody] CustomerRequestVM customerRequestVM)
         {
-            //if (await customerService.EmailValidationAsync(CustomerVM.Email)==true)
-            //{
             if (ModelState.IsValid)
             {
-                //CustomerVM.PasswordHash
-                var customerDTO = CustomerVM.Adapt<CustomerDTO>();
-                    string PasswordHash = BC.HashPassword(customerDTO.PasswordHash);
-                    customerDTO.PasswordHash = PasswordHash;
-                    var isSaved = await customerService.Register(customerDTO);
-                var customerDataDto = await customerService.GetUserByEmail(customerDTO.Email);
+                var customerRequestDTO = customerRequestVM.Adapt<CustomerRequestDTO>();
+                    string PasswordHash = BC.HashPassword(customerRequestDTO.PasswordHash);
+                    customerRequestDTO.PasswordHash = PasswordHash;
+                    var isSaved = await customerService.Register(customerRequestDTO);
+                var customerDataDto = await customerService.GetUserByEmail(customerRequestDTO.Email);
                 var customerDataVM = customerDataDto.Adapt<CustomerResponseVM>();
                     if (isSaved == 0)
-                        return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Customer Can't Be Saved" };
+                        return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "User Can't Be Saved" };
                 return new SuccessResponse<CustomerResponseVM>() { StatusCode = 200, Message = "User Registered Successfully", Data = customerDataVM };   //token
             }
             return new ErrorResponse() {StatusCode=400 , Message= "BadRequest" , Error= "Invalid Data" };
         }
         [HttpPost("Login")]
-        public async Task<BaseResponse> LogUser([FromBody] LoginRequestVM loginVM)
+        public async Task<BaseResponse> LogUser([FromBody] LoginRequestVM loginRequestVM)
         {
             if (ModelState.IsValid)
             {
-                var customerDto = await customerService.GetUserByEmail(loginVM.Email);
-                if (customerDto == null)
+                var customerRequestDto = await customerService.GetUserByEmail(loginRequestVM.Email);
+                if (customerRequestDto == null)
                     return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Email Doesn't Exist" };
-                if (BC.Verify(loginVM.PasswordHash, customerDto.PasswordHash)==true)
+                if (BC.Verify(loginRequestVM.PasswordHash, customerRequestDto.PasswordHash)==true)
                 {
-                   // var token = await jwtTokenGenerator.GenerateJwtToken( customerDto.Email , customerDto.IsAdmin ? "Admin" : "User");
-                    var customerDto2 = await customerService.GetUserByEmailandPassword(loginVM.Email, customerDto.PasswordHash);
-                    if (customerDto2 == null)
+                    //var token = await jwtTokenGenerator.GenerateJwtToken( customerDto.Email , customerDto.IsAdmin ? "Admin" : "User");
+                    var customerDataDto = await customerService.GetUserByEmailandPassword(loginRequestVM.Email, customerRequestDto.PasswordHash);
+                    if (customerDataDto == null)
                         return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Password Is Wrong" };
-                    var customerVM = customerDto2.Adapt<LoginResponseVM>();
-                    return new SuccessResponse<LoginResponseVM>() { StatusCode = 200, Message = "User Logged Successfully", Data = customerVM };   //token
+                    var customerDataVM = customerDataDto.Adapt<LoginResponseVM>();
+                    return new SuccessResponse<LoginResponseVM>() { StatusCode = 200, Message = "User Logged Successfully", Data = customerDataVM };   //  customerVM Token
                 }
             }
             return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };

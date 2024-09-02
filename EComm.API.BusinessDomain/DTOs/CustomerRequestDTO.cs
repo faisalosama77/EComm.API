@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EComm.API.BusinessDomain.DTOs
 {
-    public class CustomerDTO
+    public class CustomerRequestDTO
     {
         public string Name { get; set; }
         public string Address { get; set; }

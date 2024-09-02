@@ -17,9 +17,9 @@ namespace EComm.API.BusinessDomain.Implementation.Services
     {
         public async Task<OrderResponseDTO> AddOrderAsync(OrderDTO orderDTO)
         {
-            var amountt = await AmountCalcAsync(orderDTO.OrderItem);
+            var amount = await AmountCalcAsync(orderDTO.OrderItem);
             var AddedOrder = orderDTO.Adapt<Order>();
-            AddedOrder.Amount = amountt;
+            AddedOrder.Amount = amount;
             AddedOrder.Tax = 0.14f;
             AddedOrder.TotalAmount = TotalPrice(AddedOrder.Amount , AddedOrder.Tax);// Round
             await orderRepository.CreateOrderAsync(AddedOrder);
@@ -37,9 +37,9 @@ namespace EComm.API.BusinessDomain.Implementation.Services
                 throw new NullReferenceException("Order Doesn't Exist");
             deletedOrder.IsDeleted = true;
              await orderRepository.DeleteOrderAsync(deletedOrder);
-             var result = await unitOfWork.SaveChangesAsync();
-             if (result == 0)
-                 throw new ArgumentException("Can't Get Products");
+             var isSaved = await unitOfWork.SaveChangesAsync();
+             if (isSaved == 0)
+                 throw new ArgumentException("Can't Delete Order");
         }
 
         public async Task<IEnumerable<OrderResponseDTO?>> GetCustomerWithOrdersAsync(Guid customerId)
@@ -87,7 +87,7 @@ namespace EComm.API.BusinessDomain.Implementation.Services
         }
         public double TotalPrice(double amount, float tax)
         {
-            return amount * (1+tax);
+            return Math.Round(amount * (1+tax),2);
         }
 
 

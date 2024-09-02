@@ -13,7 +13,7 @@ namespace EComm.API.BusinessDomain.Interfaces.IServices
         public Task<int> AddProductAsync(ProductDTO productDTO);
         public Task<ProductResponseDTO> EditProductAsync(ProductDTO productDTO, Guid id);
         public Task DeleteProductAsync(Guid id);
-        public Task<Product?> GetProductByIdAsync(Guid id);
+        public Task<ProductResponseDTO?> GetProductByIdAsync(Guid id);
         public Task<IEnumerable<ProductResponseDTO?>> ListAllProductsAsync(Guid customerId);
       //  public Task<bool> AdminCheckAsync(bool isAdmin);
 

@@ -19,8 +19,8 @@ namespace EComm.API.BusinessDomain.Implementation.Services
         {
             var product = productDTO.Adapt<Product>();
             await productRepository.CreateProductAsync(product);
-            var result = await unitOfWork.SaveChangesAsync();
-            return result;
+            var isSaved = await unitOfWork.SaveChangesAsync();
+            return isSaved;
         }
         public async Task DeleteProductAsync(Guid id)
         {
@@ -56,18 +56,18 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             var result = await unitOfWork.SaveChangesAsync();
             if (result == 0)
                 throw new ArgumentException("Can't Update Customer");
-            var productForResponse = productFromDb.Adapt<ProductResponseDTO>();
-            return productForResponse;
+            var productDataDTO = productFromDb.Adapt<ProductResponseDTO>();
+            return productDataDTO;
             
         }
 
-        public async Task<Product?> GetProductByIdAsync(Guid id)
+        public async Task<ProductResponseDTO?> GetProductByIdAsync(Guid id)
         {
             var Product = await productRepository.GetProductByIdAsync(id);
-           // var wantedProduct = Product.Adapt<ProductResponseDTO>();
-            if (Product.IsDeleted == true)
+           var wantedProduct = Product.Adapt<ProductResponseDTO>();
+            if (wantedProduct.IsDeleted == true)
                 return null;
-            return Product;
+            return wantedProduct;
         }
 
         public async Task<IEnumerable<ProductResponseDTO?>> ListAllProductsAsync(Guid customerId)
@@ -76,10 +76,10 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             if (customer is null)
                 return null;
             var Products = await productRepository.GetAllProductsAsync();
-            var allProducts = Products.Adapt<List<ProductResponseDTO>>();
+            var allProductsData = Products.Adapt<List<ProductResponseDTO>>();
             if (customer.IsAdmin == false)
-                return allProducts.Where(a => a.IsDeleted == false);
-            return allProducts;
+                return allProductsData.Where(a => a.IsDeleted == false);
+            return allProductsData;
         }
 
         //private string SetStatus(int quantity)

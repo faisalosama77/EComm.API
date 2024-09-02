@@ -10,13 +10,12 @@ namespace EComm.API.Infrastructure.Entities
     public class Order
     {
         public Guid Id { get; set; }
-        [Required]
         public Guid CustomerId { get; set; }
         public Customer? Customer { get; set; }
-        public required List<OrderItem> OrderItem { get; set; }
-        public required double Amount { get; set; }
-        public required float Tax { get; set; } //14%
-        public required double TotalAmount { get; set; } //
+        public List<OrderItem> OrderItem { get; set; }
+        public double Amount { get; set; }
+        public float Tax { get; set; } //14%
+        public double TotalAmount { get; set; } 
         public DateTime CreatedOn { get; set; } 
         public DateTime UpdatedOn { get; set; } 
         public bool IsDeleted { get; set; }

@@ -10,8 +10,8 @@ namespace EComm.API.BusinessDomain.Interfaces.IServices
 {
     public interface ICustomerService
     {
-        public Task<int> Register(CustomerDTO userDTO);
-        public Task<CustomerDTO> GetUserByEmail(string email);
+        public Task<int> Register(CustomerRequestDTO userDTO);
+        public Task<CustomerRequestDTO> GetUserByEmail(string email);
         public Task<CustomerResponseDTO> GetUserByEmailandPassword(string email, string password);
         public Task<Customer> GetUserById(Guid id);
        // public Task<bool> EmailValidationAsync(string email);

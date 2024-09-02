@@ -20,29 +20,29 @@ namespace EComm.API.BusinessDomain.Implementation.Services
 {
     public class CustomerService(ICustomerRepository userRepository, IUnitOfWork unitOfWork ) : ICustomerService
     {
-        public async Task<int> Register(CustomerDTO customerDTO)
+        public async Task<int> Register(CustomerRequestDTO customerRequestDTO)
         {
-            var user = customerDTO.Adapt<Customer>();
-            await userRepository.CreateUserAsync(user);
-            var result = await unitOfWork.SaveChangesAsync();
-            return result;
+            var customer = customerRequestDTO.Adapt<Customer>();
+            await userRepository.CreateUserAsync(customer);
+            var isSaved = await unitOfWork.SaveChangesAsync();
+            return isSaved;
         }
 
 
-        public async Task<CustomerDTO> GetUserByEmail(string email)
+        public async Task<CustomerRequestDTO> GetUserByEmail(string email)
         {
-           var user = await userRepository.GetUserByEmail(email);
-            if (user != null)
-                return user.Adapt<CustomerDTO>();
+           var customer = await userRepository.GetUserByEmail(email);
+            if (customer != null)
+                return customer.Adapt<CustomerRequestDTO>();
 
             return null;
         }
 
         public async Task<CustomerResponseDTO> GetUserByEmailandPassword(string email, string password)
         {
-            var user = await userRepository.GetUserByEmailandPassword(email, password);
-            if (user != null)
-                return user.Adapt<CustomerResponseDTO>();
+            var customer = await userRepository.GetUserByEmailandPassword(email, password);
+            if (customer != null)
+                return customer.Adapt<CustomerResponseDTO>();
             return null;
         }
         public async Task<Customer> GetUserById(Guid id)

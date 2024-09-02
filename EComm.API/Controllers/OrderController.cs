@@ -17,15 +17,15 @@ namespace EComm.API.Controllers
     public class OrderController(IOrderService orderService) : ControllerBase
     {
         [HttpPost("AddOrder")]
-        public async Task<BaseResponse> PostOrder([FromBody] OrderRequestVM orderVM)
+        public async Task<BaseResponse> PostOrder([FromBody] OrderRequestVM orderRequestVM)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var orderDTO = orderVM.Adapt<OrderDTO>();
-                    var OrderDetails = await orderService.AddOrderAsync(orderDTO);
-                    return new SuccessResponse<OrderResponseDTO>() { StatusCode = 200, Message = "Order Added Successfully", Data = OrderDetails };   //token
+                    var orderDTO = orderRequestVM.Adapt<OrderDTO>();
+                    var OrderDetailsDTO = await orderService.AddOrderAsync(orderDTO);
+                    return new SuccessResponse<OrderResponseDTO>() { StatusCode = 200, Message = "Order Added Successfully", Data = OrderDetailsDTO };   //token
                 }
                 catch (ArgumentException argumentException)
                 {
@@ -52,7 +52,7 @@ namespace EComm.API.Controllers
                 if (customerWithOrders == null)
                     return new ErrorResponse() { StatusCode = 404, Message = "Not Found", Error = "Customer Doesn't Exist" };
                 var customerWithOrdersVM = customerWithOrders.Adapt<IEnumerable<OrderResponseVM>>();
-                return new SuccessResponse<IEnumerable<OrderResponseVM>>() { StatusCode = 200, Message = "Products Retrieved Successfully", Data = customerWithOrdersVM }; //Ok($"{AllProducts} 
+                return new SuccessResponse<IEnumerable<OrderResponseVM>>() { StatusCode = 200, Message = "Orders Retrieved Successfully", Data = customerWithOrdersVM }; //Ok($"{AllProducts} 
             }
             return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
         }

@@ -19,7 +19,7 @@ namespace EComm.API.CustomValidation
             {
                 return new ValidationResult("Password is required.");
             }
-            bool validates = Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$]");
+            bool validates = Regex.IsMatch(password, @"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$");
             if (validates)
             {
                 return ValidationResult.Success;

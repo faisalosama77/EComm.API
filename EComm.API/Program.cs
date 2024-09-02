@@ -12,6 +12,16 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMyServices(builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PolicyName", policyBuilder =>
+    {
+        policyBuilder.AllowAnyOrigin(); // WithOrigins("frontDomain");
+        policyBuilder.AllowAnyHeader(); // no secuirty for header request
+        policyBuilder.AllowAnyMethod();// al CRUD allowed and we check specific methods 
+        policyBuilder.AllowCredentials(); // allow any credential to use apis (for test resons)
+    });
+});
 
 //dbcontext config
 
@@ -30,6 +40,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors("PolicyName");
 
 DependencyInjection.AppConfig(app);
 

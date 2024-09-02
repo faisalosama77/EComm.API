@@ -20,11 +20,11 @@ namespace EComm.API.Controllers
     {
         //[Authorize]
         [HttpPost("AddProduct")]
-        public async Task<BaseResponse> PostProduct([FromBody] ProductRequestVM productVM)
+        public async Task<BaseResponse> PostProduct([FromBody] ProductRequestVM productRequestVM)
         {
             if (ModelState.IsValid)
             {
-                    var productDTO = productVM.Adapt<ProductDTO>();
+                    var productDTO = productRequestVM.Adapt<ProductDTO>();
                     var isSaved = await productService.AddProductAsync(productDTO);
                     if(isSaved == 0 )
                         return new ErrorResponse() { StatusCode = 400, Message = "Bad Request", Error = "Can't Add Product"};
@@ -43,7 +43,7 @@ namespace EComm.API.Controllers
                 if (product == null)
                     return new ErrorResponse() { StatusCode = 404, Message = "Not Found", Error = "Product Doesn't Exist " };
                 var productVM = product.Adapt<ProductResponseVM>();
-                return new SuccessResponse<ProductResponseVM>() { StatusCode = 200, Message = "Products Retrieved Successfully", Data = productVM };
+                return new SuccessResponse<ProductResponseVM>() { StatusCode = 200, Message = "Product Retrieved Successfully", Data = productVM };
             }
             return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
         }
@@ -52,10 +52,10 @@ namespace EComm.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                    var AllProducts = await productService.ListAllProductsAsync(customerId);
-                    if (AllProducts == null)
+                    var AllProductsDto = await productService.ListAllProductsAsync(customerId);
+                    if (AllProductsDto == null)
                         return new ErrorResponse() { StatusCode = 404, Message = "Not Found", Error = "Customer Id Doesn't Exist" };
-                    var allProductsVM = AllProducts.Adapt<List<ProductResponseVM>>();
+                    var allProductsVM = AllProductsDto.Adapt<List<ProductResponseVM>>();
                     return new SuccessResponse<List<ProductResponseVM>>() { StatusCode = 200, Message = "Products Retrieved Successfully", Data = allProductsVM };  
             }
             return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
@@ -81,13 +81,13 @@ namespace EComm.API.Controllers
         }
 
         [HttpPut("UpdateProduct{id}")]
-       public async Task<BaseResponse> PutProduct([FromBody] ProductRequestVM productVM , Guid id)
+       public async Task<BaseResponse> PutProduct([FromBody] ProductRequestVM productRequestVM , Guid id)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var productDTO = productVM.Adapt<ProductDTO>();
+                    var productDTO = productRequestVM.Adapt<ProductDTO>();
                     var productdb = await productService.EditProductAsync(productDTO, id);
                     var productResponse = productdb.Adapt<ProductResponseVM>();
                     return new SuccessResponse<ProductResponseVM>() { StatusCode = 200, Message = "Product Updated Successfully", Data = productResponse };   //token

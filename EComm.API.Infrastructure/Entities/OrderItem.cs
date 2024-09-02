@@ -12,10 +12,8 @@ namespace EComm.API.Infrastructure.Entities
         public Guid Id { get; set; }
         public Guid OrderId { get; set; }
         public required Order Order { get; set; }
-        [Required]
         public Guid ProductId { get; set; }
         public required Product Products { get; set; }
-        [Required]
         public int Quantity { get; set; }
         public double Cost { get; set; }
     }

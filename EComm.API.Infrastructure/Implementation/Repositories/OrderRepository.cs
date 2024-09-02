@@ -21,7 +21,7 @@ namespace EComm.API.Infrastructure.Implementation.Repositories
         public async Task CreateOrderAsync(Order order)
         {
             order.CreatedOn = DateTime.Now;
-            _orders.AddRange(order);
+            _orders.Add(order);
             await Task.CompletedTask;
         }
 
