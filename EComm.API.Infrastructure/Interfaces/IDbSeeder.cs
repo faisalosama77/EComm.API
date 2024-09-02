@@ -8,6 +8,6 @@ namespace EComm.API.Infrastructure.Interfaces
 {
     public interface IDbSeeder
     {
-        public Task CheckDB();
+        public void CheckDB();
     }
 }

@@ -19,7 +19,7 @@ namespace EComm.API.Controllers
             if (ModelState.IsValid)
             {
                 //CustomerVM.PasswordHash
-                    var customerDTO = CustomerVM.Adapt<CustomerDTO>();
+                var customerDTO = CustomerVM.Adapt<CustomerDTO>();
                     string PasswordHash = BC.HashPassword(customerDTO.PasswordHash);
                     customerDTO.PasswordHash = PasswordHash;
                     var isSaved = await customerService.Register(customerDTO);

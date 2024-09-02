@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace EComm.API.CustomValidation
 {
-    internal class PasswordRules : ValidationAttribute
+    public class PasswordRules : ValidationAttribute
     {
         public PasswordRules()
         {
@@ -19,13 +19,8 @@ namespace EComm.API.CustomValidation
             {
                 return new ValidationResult("Password is required.");
             }
-            bool hasUpperCase = Regex.IsMatch(password, @"[A-Z]");
-            bool hasLowerCase = Regex.IsMatch(password, @"[a-z]");
-            bool hasDigit = Regex.IsMatch(password, @"\d");
-            bool hasSpecialChar = Regex.IsMatch(password, @"[\W_]");
-            bool isValidLength = password.Length >= 8;
-
-            if (hasUpperCase && hasLowerCase && hasDigit && hasSpecialChar && isValidLength)
+            bool validates = Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$]");
+            if (validates)
             {
                 return ValidationResult.Success;
             }

@@ -8,8 +8,8 @@ namespace EComm.API.Infrastructure.Interfaces
 {
     public interface IPasswordHash
     {
-        public Task<string> HashPassword(string password);
-        public Task<string> SaltPassword(string saltPass);
-        public Task<bool> Verify(string incomingPassword , string dbPassword);
+        public string HashPassword(string password);
+        public string SaltPassword(string saltPass);
+        public bool Verify(string incomingPassword , string dbPassword);
     }
 }

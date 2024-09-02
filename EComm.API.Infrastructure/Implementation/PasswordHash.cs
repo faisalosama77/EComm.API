@@ -13,32 +13,25 @@ namespace EComm.API.Infrastructure.Implementation
 {
     public class PasswordHash : IPasswordHash
     {
-        public async Task<string> HashPassword(string password)
+        public string HashPassword(string password)
         {
             string PasswordHash = BC.HashPassword(password);
-            await Task.CompletedTask;
             return PasswordHash;
         }
 
-        public async Task<string> SaltPassword(string hashedPassword)
+        public string SaltPassword(string hashedPassword)
         {
             string passSalt = hashedPassword.Substring(7, 29);
-            await Task.CompletedTask;
             return passSalt;
         }
 
-        public async Task<bool> Verify(string incomingPassword, string dbPassword)
+        public bool Verify(string incomingPassword, string dbPassword)
         {
             if (BC.Verify(incomingPassword, dbPassword) == true)
             {
-                await Task.CompletedTask;
                 return true;
             }
-            else
-            {
-                await Task.CompletedTask;
                 return false;
-            }
         }
     }
 }

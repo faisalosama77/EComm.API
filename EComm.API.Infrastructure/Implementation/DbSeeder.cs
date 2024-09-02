@@ -15,21 +15,26 @@ namespace EComm.API.Infrastructure.Implementation
     public class DbSeeder(AppDbContext context , IPasswordHash passwordhashed) : IDbSeeder
     {
         private readonly DbSet<Customer> customers = context.Customers;
-        public async Task CheckDB()
+        public  void CheckDB()
         {
-            var intialTable = await customers.AnyAsync();
-            if (!intialTable)
+            var intialTable = customers.Any();
+            if (!intialTable) 
             {
-                Customer Admin = new Customer() { Phone = "01014213216", Email = "SuperAdmin@ldc.com" ,PasswordHash = await passwordhashed.HashPassword("SuperAdmin@#$"),Status = "Active" };
-
-                Admin.Name = "SuperAdmin";
-                Admin.Address = "Maadi";
-                Admin.PasswordSalt = await passwordhashed.SaltPassword(Admin.PasswordHash);
+                Customer Admin = new()
+                {
+                    Phone = "01014213216",
+                    Email = "SuperAdmin@ldc.com",
+                    PasswordHash =  passwordhashed.HashPassword("SuperAdmin@#$"),
+                    Status = "Active",
+                    Name = "SuperAdmin",
+                    Address = "Maadi"
+                };
+                Admin.PasswordSalt =  passwordhashed.SaltPassword(Admin.PasswordHash);
                 Admin.CreatedOn = DateTime.Now;
                 Admin.UpdatedOn = null;
                 Admin.IsAdmin = true;
                 Admin.IsDeleted = false;
-                customers.AddAsync(Admin);
+                customers.Add(Admin);
                 context.SaveChanges();
             }
             
