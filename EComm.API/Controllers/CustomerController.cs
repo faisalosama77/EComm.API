@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EComm.API.BusinessDomain.Interfaces.IServices;
 using EComm.API.Views;
-using EComm.API.BusinessDomain.DTOs;
 using Mapster;
 using EComm.API.RunTime.Classes;
 using EComm.API.View_Models;
 using Microsoft.AspNetCore.Authorization;
 using EComm.API.Infrastructure.Interfaces;
+using EComm.API.BusinessDomain.DTOs.RequestsDTO;
 namespace EComm.API.Controllers
 {
     [Route("api/Customer")]

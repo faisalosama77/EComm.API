@@ -1,4 +1,5 @@
-﻿using EComm.API.BusinessDomain.DTOs;
+﻿using EComm.API.BusinessDomain.DTOs.RequestsDTO;
+using EComm.API.BusinessDomain.DTOs.ResponsesDTOs;
 using EComm.API.BusinessDomain.Implementation.Services;
 using EComm.API.BusinessDomain.Interfaces.IServices;
 using EComm.API.Infrastructure.Entities;
