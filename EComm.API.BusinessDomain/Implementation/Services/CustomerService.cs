@@ -2,6 +2,7 @@
 using EComm.API.BusinessDomain.Interfaces.IServices;
 using EComm.API.Infrastructure.Entities;
 using EComm.API.Infrastructure.Implementation.Repositories;
+using EComm.API.Infrastructure.Interfaces;
 using EComm.API.Infrastructure.Interfaces.IRepositories;
 using Mapster;
 using Microsoft.Extensions.Configuration;
@@ -18,11 +19,12 @@ using System.Threading.Tasks;
 
 namespace EComm.API.BusinessDomain.Implementation.Services
 {
-    public class CustomerService(ICustomerRepository userRepository, IUnitOfWork unitOfWork ) : ICustomerService
+    public class CustomerService(ICustomerRepository userRepository, IUnitOfWork unitOfWork , IPasswordHash passwordHash ) : ICustomerService
     {
         public async Task<int> Register(CustomerRequestDTO customerRequestDTO)
         {
             var customer = customerRequestDTO.Adapt<Customer>();
+            customer.PasswordSalt = passwordHash.SaltPassword(customer.PasswordHash);
             await userRepository.CreateUserAsync(customer);
             var isSaved = await unitOfWork.SaveChangesAsync();
             return isSaved;
