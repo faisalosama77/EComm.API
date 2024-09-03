@@ -2,10 +2,7 @@
 
 namespace EComm.API.View_Models
 {
-    public class OrderItemRequestVM
+    public class OrderItemRequestVM : OrderItemBaseVM
     {
-        [Required]
-        public Guid ProductId { get; set; }
-        public required int Quantity { get; set; }
     }
 }

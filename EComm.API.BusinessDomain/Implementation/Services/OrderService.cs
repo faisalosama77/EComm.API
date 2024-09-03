@@ -69,7 +69,7 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             
             return orderDto.Where(a => a.IsDeleted == false);
         }
-        public async Task<double> AmountCalcAsync(List<OrderItemDTO> orderItems)
+        public async Task<double> AmountCalcAsync(List<OrderItemRequestDTO> orderItems)
         {
             double totalCost = 0.0;
             var cost = 0.0;

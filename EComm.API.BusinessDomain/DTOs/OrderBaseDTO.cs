@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace EComm.API.BusinessDomain.DTOs
 {
-    public class LoginResponseDTO : LoginBaseDTO
+    public abstract class OrderBaseDTO
     {
+        public Guid CustomerId { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

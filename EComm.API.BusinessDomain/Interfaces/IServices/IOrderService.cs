@@ -15,7 +15,7 @@ namespace EComm.API.BusinessDomain.Interfaces.IServices
         public Task<IEnumerable<OrderResponseDTO?>> ListAllOrdersAsync();
         public Task<IEnumerable<OrderResponseDTO?>> GetCustomerWithOrdersAsync(Guid customerId);
         public Task<OrderResponseDTO?> GetOrderByIdAsync(Guid id);
-        public Task<double> AmountCalcAsync(List<OrderItemDTO> orderItems);
+        public Task<double> AmountCalcAsync(List<OrderItemRequestDTO> orderItems);
         public double TotalPrice(double amount, float tax);
 
 

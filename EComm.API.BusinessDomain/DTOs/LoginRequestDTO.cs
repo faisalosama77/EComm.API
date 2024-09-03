@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace EComm.API.BusinessDomain.DTOs
 {
-    public class LoginRequestDTO
+    public class LoginRequestDTO : LoginBaseDTO
     {
-        public string Email { get; set; }
-        public string PasswordHash { get; set; }
     }
 }

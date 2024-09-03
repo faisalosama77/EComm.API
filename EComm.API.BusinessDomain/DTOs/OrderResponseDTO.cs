@@ -7,16 +7,14 @@ using System.Threading.Tasks;
 
 namespace EComm.API.BusinessDomain.DTOs
 {
-    public class OrderResponseDTO
+    public class OrderResponseDTO : OrderBaseDTO
     {
         public Guid Id { get; set; }
-        public Guid CustomerId { get; set; }
         public required List<OrderItemResponseDTO> OrderItem { get; set; }
         public required double Amount { get; set; }
         public required float Tax { get; set; } //14%
         public required double TotalAmount { get; set; } //
         public DateTime CreatedOn { get; set; }
         public DateTime UpdatedOn { get; set; }
-        public bool IsDeleted { get; set; }
     }
 }
