@@ -10,8 +10,8 @@ namespace EComm.API.BusinessDomain.Interfaces.IServices
 {
     public interface IProductService
     {
-        public Task<int> AddProductAsync(ProductDTO productDTO);
-        public Task<ProductResponseDTO> EditProductAsync(ProductDTO productDTO, Guid id);
+        public Task<int> AddProductAsync(ProductRequestDTO productDTO);
+        public Task<ProductResponseDTO> EditProductAsync(ProductRequestDTO productDTO, Guid id);
         public Task DeleteProductAsync(Guid id);
         public Task<ProductResponseDTO?> GetProductByIdAsync(Guid id);
         public Task<IEnumerable<ProductResponseDTO?>> ListAllProductsAsync(Guid customerId);

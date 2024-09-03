@@ -23,7 +23,7 @@ namespace EComm.API.Controllers
             {
                 try
                 {
-                    var orderDTO = orderRequestVM.Adapt<OrderDTO>();
+                    var orderDTO = orderRequestVM.Adapt<OrderRequestDTO>();
                     var OrderDetailsDTO = await orderService.AddOrderAsync(orderDTO);
                     return new SuccessResponse<OrderResponseDTO>() { StatusCode = 200, Message = "Order Added Successfully", Data = OrderDetailsDTO };   //token
                 }

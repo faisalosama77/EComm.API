@@ -17,8 +17,8 @@ namespace EComm.API.Infrastructure.Implementation.Repositories
         }
         public async Task<int> SaveChangesAsync()
         {
-            var result = await _context.SaveChangesAsync();
-            return result; 
+            var save = await _context.SaveChangesAsync();
+            return save; 
         }
     }
 }

@@ -59,12 +59,12 @@ namespace EComm.API.RunTime
             //         .AddDefaultTokenProviders();
 
             services.Configure<ApiBehaviorOptions>(options =>options.SuppressConsumesConstraintForFormFileParameters = true);
-            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ICustomerRepository, CustomerSqlRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICustomerService, CustomerService>();
-            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductRepository, ProductSqlRepository>();
             services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderRepository, OrderSqlRepository>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             services.AddScoped<IDbSeeder, DbSeeder>();

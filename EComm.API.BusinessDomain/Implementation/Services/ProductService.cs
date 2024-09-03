@@ -15,7 +15,7 @@ namespace EComm.API.BusinessDomain.Implementation.Services
 {
     public class ProductService(IProductRepository productRepository, IUnitOfWork unitOfWork,ICustomerService customerService) : IProductService
     {
-        public async Task<int> AddProductAsync(ProductDTO productDTO)
+        public async Task<int> AddProductAsync(ProductRequestDTO productDTO)
         {
             var product = productDTO.Adapt<Product>();
             await productRepository.CreateProductAsync(product);
@@ -34,7 +34,7 @@ namespace EComm.API.BusinessDomain.Implementation.Services
                 throw new ArgumentException("Can't Delete Product");
         }
 
-        public async Task<ProductResponseDTO> EditProductAsync(ProductDTO productDTO, Guid id)
+        public async Task<ProductResponseDTO> EditProductAsync(ProductRequestDTO productDTO, Guid id)
         {
             var productFromDb = await productRepository.GetProductByIdAsync(id);
             if (productFromDb == null)

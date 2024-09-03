@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace EComm.API.Infrastructure.Implementation.Repositories
 {
-    public class ProductRepository : IProductRepository
+    public class ProductSqlRepository : IProductRepository
     {
         private readonly DbSet<Product> _products;
-        public ProductRepository(AppDbContext context)
+        public ProductSqlRepository(AppDbContext context)
         {
             _products = context.Products;
 

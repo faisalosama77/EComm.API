@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace EComm.API.Infrastructure.Implementation.Repositories
 {
-    public class OrderRepository : IOrderRepository
+    public class OrderSqlRepository : IOrderRepository
     {
         private readonly DbSet<Order> _orders;
-        public OrderRepository(AppDbContext context)
+        public OrderSqlRepository(AppDbContext context)
         {
             _orders = context.Orders;
 

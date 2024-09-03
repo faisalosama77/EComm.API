@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EComm.API.Infrastructure.Implementation.Repositories
 {
-    public class CustomerRepository(AppDbContext context) : ICustomerRepository
+    public class CustomerSqlRepository(AppDbContext context) : ICustomerRepository
     {
         private readonly DbSet<Customer> _customer = context.Customers;
 

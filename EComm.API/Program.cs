@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
         policyBuilder.AllowAnyOrigin(); // WithOrigins("frontDomain");
         policyBuilder.AllowAnyHeader(); // no secuirty for header request
         policyBuilder.AllowAnyMethod();// al CRUD allowed and we check specific methods 
-        policyBuilder.AllowCredentials(); // allow any credential to use apis (for test resons)
+        //policyBuilder.AllowCredentials(); // allow any credential to use apis (for test resons)
     });
 });
 

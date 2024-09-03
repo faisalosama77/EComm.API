@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EComm.API.BusinessDomain.DTOs
 {
-    public class ProductDTO
+    public class ProductRequestDTO
     {
         public string Name { get; set; }
         public string Description { get; set; }

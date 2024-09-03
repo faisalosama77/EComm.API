@@ -24,7 +24,7 @@ namespace EComm.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                    var productDTO = productRequestVM.Adapt<ProductDTO>();
+                    var productDTO = productRequestVM.Adapt<ProductRequestDTO>();
                     var isSaved = await productService.AddProductAsync(productDTO);
                     if(isSaved == 0 )
                         return new ErrorResponse() { StatusCode = 400, Message = "Bad Request", Error = "Can't Add Product"};
@@ -87,7 +87,7 @@ namespace EComm.API.Controllers
             {
                 try
                 {
-                    var productDTO = productRequestVM.Adapt<ProductDTO>();
+                    var productDTO = productRequestVM.Adapt<ProductRequestDTO>();
                     var productdb = await productService.EditProductAsync(productDTO, id);
                     var productResponse = productdb.Adapt<ProductResponseVM>();
                     return new SuccessResponse<ProductResponseVM>() { StatusCode = 200, Message = "Product Updated Successfully", Data = productResponse };   //token

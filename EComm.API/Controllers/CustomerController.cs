@@ -4,13 +4,13 @@ using EComm.API.Views;
 using EComm.API.BusinessDomain.DTOs;
 using Mapster;
 using EComm.API.RunTime.Classes;
-using BC = BCrypt.Net.BCrypt;
 using EComm.API.View_Models;
 using Microsoft.AspNetCore.Authorization;
+using EComm.API.Infrastructure.Interfaces;
 namespace EComm.API.Controllers
 {
     [Route("api/Customer")]
-    public class CustomerController(ICustomerService customerService ,IJwtTokenGenerator jwtTokenGenerator) : ControllerBase
+    public class CustomerController(ICustomerService _customerService,/*IJwtTokenGenerator _jwtTokenGenerator ,*/ IPasswordHash _passwordHash) : ControllerBase
     {
         [HttpPost("Register")]
         public async Task<BaseResponse> PostUser([FromBody] CustomerRequestVM customerRequestVM)
@@ -18,10 +18,10 @@ namespace EComm.API.Controllers
             if (ModelState.IsValid)
             {
                 var customerRequestDTO = customerRequestVM.Adapt<CustomerRequestDTO>();
-                    string PasswordHash = BC.HashPassword(customerRequestDTO.PasswordHash);
+                string PasswordHash = _passwordHash.HashPassword(customerRequestDTO.PasswordHash);        //BC.HashPassword();
                     customerRequestDTO.PasswordHash = PasswordHash;
-                    var isSaved = await customerService.Register(customerRequestDTO);
-                var customerDataDto = await customerService.GetUserByEmail(customerRequestDTO.Email);
+                    var isSaved = await _customerService.Register(customerRequestDTO);
+                var customerDataDto = await _customerService.GetUserByEmail(customerRequestDTO.Email);
                 var customerDataVM = customerDataDto.Adapt<CustomerResponseVM>();
                     if (isSaved == 0)
                         return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "User Can't Be Saved" };
@@ -34,13 +34,13 @@ namespace EComm.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var customerRequestDto = await customerService.GetUserByEmail(loginRequestVM.Email);
+                var customerRequestDto = await _customerService.GetUserByEmail(loginRequestVM.Email);
                 if (customerRequestDto == null)
                     return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Email Doesn't Exist" };
-                if (BC.Verify(loginRequestVM.PasswordHash, customerRequestDto.PasswordHash)==true)
+                if (_passwordHash.Verify(loginRequestVM.PasswordHash, customerRequestDto.PasswordHash) ==true)
                 {
                     //var token = await jwtTokenGenerator.GenerateJwtToken( customerDto.Email , customerDto.IsAdmin ? "Admin" : "User");
-                    var customerDataDto = await customerService.GetUserByEmailandPassword(loginRequestVM.Email, customerRequestDto.PasswordHash);
+                    var customerDataDto = await _customerService.GetUserByEmailandPassword(loginRequestVM.Email, customerRequestDto.PasswordHash);
                     if (customerDataDto == null)
                         return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Password Is Wrong" };
                     var customerDataVM = customerDataDto.Adapt<LoginResponseVM>();
@@ -49,5 +49,7 @@ namespace EComm.API.Controllers
             }
             return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
         }
+
+        //BC.Verify()
     }
 }

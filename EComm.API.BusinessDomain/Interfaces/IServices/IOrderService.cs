@@ -10,7 +10,7 @@ namespace EComm.API.BusinessDomain.Interfaces.IServices
 {
     public interface IOrderService
     {
-        public Task<OrderResponseDTO> AddOrderAsync(OrderDTO orderDTO);
+        public Task<OrderResponseDTO> AddOrderAsync(OrderRequestDTO orderDTO);
         public Task DeleteOrderAsync(Guid id);
         public Task<IEnumerable<OrderResponseDTO?>> ListAllOrdersAsync();
         public Task<IEnumerable<OrderResponseDTO?>> GetCustomerWithOrdersAsync(Guid customerId);

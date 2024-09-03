@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EComm.API.BusinessDomain.DTOs
 {
-    public class OrderDTO
+    public class OrderRequestDTO
     {
         public Guid CustomerId { get; set; }
         public List<OrderItemDTO> OrderItem { get; set; }

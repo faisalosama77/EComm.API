@@ -15,7 +15,7 @@ namespace EComm.API.BusinessDomain.Implementation.Services
 {
     public class OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWork  , IProductService productService) : IOrderService
     {
-        public async Task<OrderResponseDTO> AddOrderAsync(OrderDTO orderDTO)
+        public async Task<OrderResponseDTO> AddOrderAsync(OrderRequestDTO orderDTO)
         {
             var amount = await AmountCalcAsync(orderDTO.OrderItem);
             var AddedOrder = orderDTO.Adapt<Order>();
@@ -76,7 +76,7 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             foreach (var item in orderItems)
             {
                 var productResponse = await productService.GetProductByIdAsync(item.ProductId);
-                var product = productResponse.Adapt<ProductDTO>();
+                var product = productResponse.Adapt<ProductRequestDTO>();
                 product.Quantity = product.Quantity - item.Quantity;
                 await productService.EditProductAsync(product, item.ProductId);
                 cost = product.Amount * item.Quantity;
