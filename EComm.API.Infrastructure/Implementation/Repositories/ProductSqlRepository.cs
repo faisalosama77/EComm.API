@@ -20,14 +20,14 @@ namespace EComm.API.Infrastructure.Implementation.Repositories
         }
         public async Task CreateProductAsync(Product product)
         {
-            product.CreatedOn = DateTime.Now;
+            product.CreatedOn = DateTimeOffset.Now;
             _products.Add(product);
             await Task.CompletedTask;
         }
 
         public async Task DeleteProductAsync(Product product)
         {
-               _products.Update(product);
+               _products.Remove(product);
             await Task.CompletedTask;
 
         }
@@ -39,13 +39,14 @@ namespace EComm.API.Infrastructure.Implementation.Repositories
 
         public async Task<Product?> GetProductByIdAsync(Guid id)
         {
-              return await _products.FirstOrDefaultAsync(x => x.Id == id);
+              return await _products.FindAsync(id);
         }
 
-        public async Task UpdateProductAsync(Product product)
+        public async Task UpdateProductAsync(Product product , Guid id)
         {
-            product.UpdatedOn = DateTime.Now;
-            _products.Update(product);
+            var productById = await GetProductByIdAsync(id);
+            productById.UpdatedOn = DateTimeOffset.Now;
+            _products.Update(productById);
             await Task.CompletedTask;
         }
     }

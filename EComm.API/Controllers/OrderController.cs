@@ -13,12 +13,12 @@ using System;
 
 namespace EComm.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Order")]
     [ApiController]
     public class OrderController(IOrderService orderService) : ControllerBase
     {
-        [HttpPost("AddOrder")]
-        public async Task<BaseResponse> PostOrder([FromBody] OrderRequestVM orderRequestVM)
+        [HttpPost]
+        public async Task<BaseResponse> Post([FromBody] OrderRequestVM orderRequestVM)
         {
             if (ModelState.IsValid)
             {
@@ -44,8 +44,8 @@ namespace EComm.API.Controllers
         //        return NotFound("No Order yet");
         //    return Ok(AllOrders);
         //}
-        [HttpGet("GetAllOrders{customerId}")]
-        public async Task<BaseResponse> GetCustomerWtihOrders(Guid customerId)
+        [HttpGet("{id}")]
+        public async Task<BaseResponse> Get(Guid customerId)
         {
             if (ModelState.IsValid)
             {
@@ -57,8 +57,8 @@ namespace EComm.API.Controllers
             }
             return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
         }
-        [HttpDelete("DeleteOrder{id}")]
-        public async Task<BaseResponse> DeleteOrder(Guid id)
+        [HttpDelete("{id}")]
+        public async Task<BaseResponse> Delete(Guid id)
         {
             if (ModelState.IsValid)
             {

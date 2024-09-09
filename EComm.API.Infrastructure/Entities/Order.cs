@@ -12,12 +12,12 @@ namespace EComm.API.Infrastructure.Entities
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
         public Customer? Customer { get; set; }
-        public List<OrderItem> OrderItem { get; set; }
+        public ICollection<OrderItem> OrderItem { get; set; } // ICollection
         public double Amount { get; set; }
         public float Tax { get; set; } //14%
         public double TotalAmount { get; set; } 
-        public DateTime CreatedOn { get; set; } 
-        public DateTime UpdatedOn { get; set; } 
+        public DateTimeOffset CreatedOn { get; set; } 
+        public DateTimeOffset UpdatedOn { get; set; } 
         public bool IsDeleted { get; set; }
     }
 }

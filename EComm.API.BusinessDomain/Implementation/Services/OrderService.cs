@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace EComm.API.BusinessDomain.Implementation.Services
 {
-    public class OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWork  , IProductService productService) : IOrderService
+    public class OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWork  , IProductRepository productRepository) : IOrderService
     {
         public async Task<OrderResponseDTO> AddOrderAsync(OrderRequestDTO orderDTO)
         {
@@ -22,7 +22,7 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             var AddedOrder = orderDTO.Adapt<Order>();
             AddedOrder.Amount = amount;
             AddedOrder.Tax = 0.14f;
-            AddedOrder.TotalAmount = TotalPrice(AddedOrder.Amount , AddedOrder.Tax);// Round
+            AddedOrder.TotalAmount = TotalPriceCalc(AddedOrder.Amount , AddedOrder.Tax);// Round
             await orderRepository.CreateOrderAsync(AddedOrder);
             var OrderDetails = AddedOrder.Adapt<OrderResponseDTO>();
             var result = await unitOfWork.SaveChangesAsync();
@@ -37,7 +37,7 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             if (deletedOrder == null) 
                 throw new NullReferenceException("Order Doesn't Exist");
             deletedOrder.IsDeleted = true;
-             await orderRepository.DeleteOrderAsync(deletedOrder);
+             await orderRepository.UpdateOrderAsync(deletedOrder , deletedOrder.Id);
              var isSaved = await unitOfWork.SaveChangesAsync();
              if (isSaved == 0)
                  throw new ArgumentException("Can't Delete Order");
@@ -66,27 +66,25 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             var orders = await orderRepository.GetAllOrdersAsync();
             if (orders is null)
                 return null;
-            var orderDto = orders.Adapt<List<OrderResponseDTO>>();
-            
-            return orderDto.Where(a => a.IsDeleted == false);
+            var ordersListDto = orders.Adapt<List<OrderResponseDTO>>(); // naming
+            return ordersListDto;
         }
-        public async Task<double> AmountCalcAsync(List<OrderItemRequestDTO> orderItems)
+        public async Task<double> AmountCalcAsync(List<OrderItemRequestDTO> orderItems) // Private
         {
             double totalCost = 0.0;
             var cost = 0.0;
             foreach (var item in orderItems)
             {
-                var productResponse = await productService.GetProductByIdAsync(item.ProductId);
-                var product = productResponse.Adapt<ProductRequestDTO>();
+                var product = await productRepository.GetProductByIdAsync(item.ProductId);
                 product.Quantity = product.Quantity - item.Quantity;
-                await productService.EditProductAsync(product, item.ProductId);
+                await productRepository.UpdateProductAsync(product, item.ProductId);
                 cost = product.Amount * item.Quantity;
                 item.Cost = cost;
                 totalCost = totalCost + cost;
             }
             return totalCost;
         }
-        public double TotalPrice(double amount, float tax)
+        public double TotalPriceCalc(double amount, float tax) // naming
         {
             return Math.Round(amount * (1+tax),2);
         }

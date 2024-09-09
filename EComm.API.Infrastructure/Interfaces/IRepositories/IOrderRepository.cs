@@ -14,5 +14,6 @@ namespace EComm.API.Infrastructure.Interfaces.IRepositories
         public Task DeleteOrderAsync(Order order);
         public Task<Order?> GetOrderByIdAsync(Guid id);
         public Task<IEnumerable<Order>> GetAllOrdersAsync();
+        public Task UpdateOrderAsync(Order order, Guid id);
     }
 }

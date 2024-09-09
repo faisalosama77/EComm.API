@@ -29,7 +29,7 @@ namespace EComm.API.BusinessDomain.Implementation.Services
             if (deletedProduct == null)
                 throw new ArgumentException("Invalid Product Id", nameof(id));
             deletedProduct.IsDeleted = true;
-            await productRepository.DeleteProductAsync(deletedProduct);
+            await productRepository.UpdateProductAsync(deletedProduct , deletedProduct.Id);
             var result = await unitOfWork.SaveChangesAsync();
             if (result == 0)
                 throw new ArgumentException("Can't Delete Product");
@@ -53,7 +53,7 @@ namespace EComm.API.BusinessDomain.Implementation.Services
                 productFromDb.Quantity = productDTO.Quantity;
             }
 
-            await productRepository.UpdateProductAsync(productFromDb);
+            await productRepository.UpdateProductAsync(productFromDb , productFromDb.Id);
             var result = await unitOfWork.SaveChangesAsync();
             if (result == 0)
                 throw new ArgumentException("Can't Update Customer");

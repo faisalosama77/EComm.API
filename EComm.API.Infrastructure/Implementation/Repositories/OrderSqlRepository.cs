@@ -20,21 +20,21 @@ namespace EComm.API.Infrastructure.Implementation.Repositories
         }
         public async Task CreateOrderAsync(Order order)
         {
-            order.CreatedOn = DateTime.Now;
+            order.CreatedOn = DateTimeOffset.Now;
             _orders.Add(order);
             await Task.CompletedTask;
         }
 
         public async Task DeleteOrderAsync(Order order)
         {
-            order.UpdatedOn = DateTime.Now;
-            _orders.Update(order);
+            order.UpdatedOn = DateTimeOffset.Now;
+            _orders.Remove(order);
             await Task.CompletedTask;
         }
 
         public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
-            return await _orders.ToListAsync();
+            return await _orders.Where(a => a.IsDeleted == false).ToListAsync();
                 //Where(o => o.CustomerId == customerId).Include(i => i.OrderItem).ToListAsync();
         }
 
@@ -46,7 +46,14 @@ namespace EComm.API.Infrastructure.Implementation.Repositories
 
         public async Task<Order?> GetOrderByIdAsync(Guid id)
         {
-            return await _orders.FirstOrDefaultAsync(x => x.Id == id);
+            return await _orders.FindAsync(id); // single , findAsync ahsn
+        }
+        public async Task UpdateOrderAsync(Order order, Guid id)
+        {
+            var orderById = await GetOrderByIdAsync(id);
+            orderById.UpdatedOn = DateTimeOffset.Now;
+            _orders.Update(orderById);
+            await Task.CompletedTask;
         }
     }
 }

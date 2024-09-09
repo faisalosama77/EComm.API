@@ -19,8 +19,8 @@ namespace EComm.API.Controllers
     public class ProductController(IProductService productService) : ControllerBase
     {
         //[Authorize]
-        [HttpPost("AddProduct")]
-        public async Task<BaseResponse> PostProduct([FromBody] ProductRequestVM productRequestVM)
+        [HttpPost]
+        public async Task<BaseResponse> Post([FromBody] ProductRequestVM productRequestVM)
         {
             if (ModelState.IsValid)
             {
@@ -34,7 +34,7 @@ namespace EComm.API.Controllers
         }
 
         //[Authorize(Roles = "Admin")]
-        [HttpGet("GetProductById{id}")]
+        [HttpGet("{id}")]
         public async Task<BaseResponse> GetProductById([FromRoute]Guid id)
         {
             if (ModelState.IsValid)
@@ -47,8 +47,8 @@ namespace EComm.API.Controllers
             }
             return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
         }
-        [HttpGet("GetAllProducts")]
-        public async Task<BaseResponse> GetAllProducts(Guid customerId)
+        [HttpGet("{id}")]
+        public async Task<BaseResponse> Get(Guid customerId)
         {
             if (ModelState.IsValid)
             {
@@ -60,8 +60,8 @@ namespace EComm.API.Controllers
             }
             return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
         }
-        [HttpDelete("DeleteProduct{id}")]
-        public async Task<BaseResponse> DeleteProduct(Guid id)
+        [HttpDelete("{id}")]
+        public async Task<BaseResponse> Delete(Guid id)
         {
             if (ModelState.IsValid)
             {
@@ -80,8 +80,8 @@ namespace EComm.API.Controllers
             return new ErrorResponse() { StatusCode = 400, Message = "BadRequest", Error = "Invalid Data" };
         }
 
-        [HttpPut("UpdateProduct{id}")]
-       public async Task<BaseResponse> PutProduct([FromBody] ProductRequestVM productRequestVM , Guid id)
+        [HttpPut("{id}")]
+       public async Task<BaseResponse> Put([FromBody] ProductRequestVM productRequestVM , Guid id)
         {
             if (ModelState.IsValid)
             {

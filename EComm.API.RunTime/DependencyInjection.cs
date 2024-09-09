@@ -83,7 +83,10 @@ namespace EComm.API.RunTime
             {
                 var seeder = scope.ServiceProvider.GetRequiredService<IDbSeeder>();
                 seeder.CheckDB();
+                var migrator = scope.ServiceProvider.GetRequiredService<IDbMigrator>();
+                migrator.MigrateDatabase();
             }
         }
+
     }
 }

@@ -12,8 +12,8 @@ namespace EComm.API.Controllers
     [Route("api/Customer")]
     public class CustomerController(ICustomerService _customerService,/*IJwtTokenGenerator _jwtTokenGenerator ,*/ IPasswordHash _passwordHash) : ControllerBase
     {
-        [HttpPost("Register")]
-        public async Task<BaseResponse> PostUser([FromBody] CustomerRequestVM customerRequestVM)
+        [HttpPost]
+        public async Task<BaseResponse> Post([FromBody] CustomerRequestVM customerRequestVM)
         {
             if (ModelState.IsValid)
             {

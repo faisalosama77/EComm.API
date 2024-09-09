@@ -17,7 +17,7 @@ namespace EComm.API.Infrastructure.Implementation.Repositories
 
         public async Task CreateUserAsync(Customer customer)
         {
-            customer.CreatedOn = DateTime.Now;
+            customer.CreatedOn = DateTimeOffset.Now;
             _customer.Add(customer);
             await Task.CompletedTask;
         }
@@ -31,7 +31,7 @@ namespace EComm.API.Infrastructure.Implementation.Repositories
             => await _customer.FirstOrDefaultAsync(a => a.Email == email && a.PasswordHash == password);
         public async Task<Customer> GetUserById(Guid id)
         {
-            return await _customer.FirstOrDefaultAsync(x => x.Id == id);
+            return await _customer.FindAsync(id);
         }
     }
 }

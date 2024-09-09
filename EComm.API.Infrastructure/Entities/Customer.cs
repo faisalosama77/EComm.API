@@ -20,8 +20,8 @@ namespace EComm.API.Infrastructure.Entities
         public string? PasswordSalt { get; set; }
         public string PasswordHash { get; set; }
         public string Status { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public DateTime? UpdatedOn { get; set; }
+        public DateTimeOffset? CreatedOn { get; set; }
+        public DateTimeOffset? UpdatedOn { get; set; }
         public bool IsDeleted { get; set; }
         public bool IsAdmin { get; set; } =false;
 
